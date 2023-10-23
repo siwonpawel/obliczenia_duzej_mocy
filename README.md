@@ -1,0 +1,1 @@
+clang++ -O3 --std=c++11 -stdlib=libc++ main.cpp -o 2kt
