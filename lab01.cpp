@@ -22,7 +22,7 @@ void multiplyTransposed(int **A, int **B, int **R, int begin, int skip) {
     for (int i = begin; i < array_size; i += skip) {
         for (int j = 0; j < array_size; j++) {
             for (int k = 0; k < array_size; k++) {
-                R[i][j] += A[i][k] * B[i][k];
+                R[i][j] += A[i][k] * B[j][k];
             }
         }
     }
