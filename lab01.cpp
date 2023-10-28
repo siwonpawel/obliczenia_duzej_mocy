@@ -71,6 +71,7 @@ int main() {
     initArr(A);
     initArr(B);
     initArr(BT);
+    initArr(R);
 
     transpose(B, BT);
 
