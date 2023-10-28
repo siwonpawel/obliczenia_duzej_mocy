@@ -11,19 +11,23 @@ int threadsNos[] = {1, 2, 4, 6, 8};
 void multiply(int **A, int **B, int **R, int begin, int skip) {
     for (int i = begin; i < array_size; i += skip) {
         for (int j = 0; j < array_size; j++) {
+            int sum = 0;
             for (int k = 0; k < array_size; k++) {
-                R[i][j] += A[i][k] * B[k][j];
+                sum += A[i][k] * B[k][j];
             }
+            R[i][j] = sum;
         }
     }
 }
 
-void multiplyTransposed(int **A, int **B, int **R, int begin, int skip) {
+void multiplyTransposed(int **A, int **BT, int **R, int begin, int skip) {
     for (int i = begin; i < array_size; i += skip) {
         for (int j = 0; j < array_size; j++) {
+            int sum = 0;
             for (int k = 0; k < array_size; k++) {
-                R[i][j] += A[i][k] * B[j][k];
+                sum += A[i][k] * BT[j][k];
             }
+            R[i][j] = sum;
         }
     }
 }
@@ -44,7 +48,7 @@ void initArr(int **arr) {
 
     for (int i = 0; i < array_size; i++) {
         for (int j = 0; j < array_size; j++) {
-            arr[i][j] = j * i;
+            arr[i][j] = j + i * 2 + 1;
         }
     }
 }
@@ -67,9 +71,8 @@ int main() {
     initArr(A);
     initArr(B);
     initArr(BT);
-    initArr(R);
 
-    transpose(A, B);
+    transpose(B, BT);
 
 
     for (int threads_number: threadsNos) {
@@ -92,7 +95,7 @@ int main() {
 
         start = high_resolution_clock::now();
         for (int i = 0; i < threads_number; i++) {
-            threads[i] = std::thread(multiplyTransposed, A, B, R, i, threads_number);
+            threads[i] = std::thread(multiplyTransposed, A, BT, R, i, threads_number);
         }
 
         for (auto &thread: threads) {
