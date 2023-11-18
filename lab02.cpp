@@ -4,7 +4,7 @@
 #include <thread>
 #include <chrono>
 
-#define THREADS 400
+#define THREADS 12
 
 using namespace std;
 using namespace chrono;
@@ -25,6 +25,8 @@ const int MaxColorComponentValue = 255;
 const int IterationMax = 200;
 const double EscapeRadius = 2;
 const double ER2 = EscapeRadius * EscapeRadius;
+
+int sumi[THREADS] = {0};
 
 unsigned char color[iYmax][iXmax][3];
 
@@ -56,6 +58,9 @@ void calt(int tid) {
                 Zx2 = Zx * Zx;
                 Zy2 = Zy * Zy;
             }
+
+            sumi[tid] += Iteration;
+
             /* compute  pixel color (24 bit = 3 bytes) */
             if (Iteration == IterationMax) { /*  interior of Mandelbrot set = black */
                 color[iY][iX][0] = 0;
@@ -91,6 +96,11 @@ int main() {
     for (int i = 0; i < THREADS; i++) {
         ekipa[i].join();
     }
+
+    for (int i = 0; i < THREADS; i++) {
+        cout << sumi[i] << endl;
+    }
+
     auto end = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     std::cout << elapsedTime << std::endl;
