@@ -37,6 +37,10 @@ void calt(int tid) {
     double Zx, Zy;
     double Zx2, Zy2; /* Zx2=Zx*Zx;  Zy2=Zy*Zy  */
 
+    int red = random() % 255;
+    int green = random() % 255;
+    int blue = random() % 255;
+
     int chunk = iYmax / THREADS;
     int lb = tid * chunk;
     int ub = lb + chunk;
@@ -67,9 +71,9 @@ void calt(int tid) {
                 color[iY][iX][1] = 0;
                 color[iY][iX][2] = 0;
             } else { /* exterior of Mandelbrot set = white */
-                color[iY][iX][0] = 255; /* Red*/
-                color[iY][iX][1] = 255; /* Green */
-                color[iY][iX][2] = 255; /* Blue */
+                color[iY][iX][0] = red; /* Red*/
+                color[iY][iX][1] = green; /* Green */
+                color[iY][iX][2] = blue; /* Blue */
             }
         }
     }
@@ -110,3 +114,14 @@ int main() {
     fclose(fp);
     return 0;
 }
+
+
+/*
+ * Do sprawka
+ * kolorki
+ * czasy
+ * rozne rozmiary obrazka
+ * rozne rozmiary threads
+ *
+ * load balancing / czas przestoju
+ */
