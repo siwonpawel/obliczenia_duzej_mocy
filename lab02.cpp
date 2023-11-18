@@ -4,7 +4,7 @@
 #include <thread>
 #include <chrono>
 
-#define THREADS 12
+#define THREADS 1
 
 using namespace std;
 using namespace chrono;
@@ -63,7 +63,7 @@ void calt(int tid) {
                 Zy2 = Zy * Zy;
             }
 
-            sumi[tid] += Iteration;
+//            sumi[tid] += Iteration;
 
             /* compute  pixel color (24 bit = 3 bytes) */
             if (Iteration == IterationMax) { /*  interior of Mandelbrot set = black */
@@ -101,9 +101,9 @@ int main() {
         ekipa[i].join();
     }
 
-    for (int i = 0; i < THREADS; i++) {
-        cout << sumi[i] << endl;
-    }
+//    for (int i = 0; i < THREADS; i++) {
+//        cout << sumi[i] << endl;
+//    }
 
     auto end = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
