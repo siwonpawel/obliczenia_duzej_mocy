@@ -3,4 +3,6 @@ project(odm)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(odm lab01.cpp)
+add_executable(odm lab01.cpp
+        lab02.cpp
+)
