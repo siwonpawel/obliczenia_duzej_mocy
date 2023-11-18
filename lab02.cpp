@@ -17,7 +17,7 @@ double PixelHeight = (CyMax - CyMin) / iYmax;
 const int MaxColorComponentValue = 255;
 const int IterationMax = 200;
 const double EscapeRadius = 2;
-const double ER2 = EscapeRadius * EscapeRadius
+const double ER2 = EscapeRadius * EscapeRadius;
 
 unsigned char color[iYmax][iXmax][3];
 
@@ -29,8 +29,8 @@ int main() {
     double Cx, Cy;
 
     FILE *fp;
-    char *filename = "new1.ppm";
-    char *comment = "# ";/* comment should start with # */
+    const char *filename = "new1.ppm";
+    const char *comment = "# ";/* comment should start with # */
     /* Z=Zx+Zy*i  ;   Z0 = 0 */
     double Zx, Zy;
     double Zx2, Zy2; /* Zx2=Zx*Zx;  Zy2=Zy*Zy  */
@@ -68,10 +68,10 @@ int main() {
                 color[iY][iX][1] = 255; /* Green */
                 color[iY][iX][2] = 255; /* Blue */
             };
-            /*write color to the file*/
-            fwrite(color, 1, 3, fp);
         }
     }
+
+    fwrite(color, 1, 3 * iYmax * iXmax, fp);
     fclose(fp);
     return 0;
 }
