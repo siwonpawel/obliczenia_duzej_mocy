@@ -107,7 +107,7 @@ int main() {
 
     auto end = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << elapsedTime << std::endl;
+    std::cout << elapsedTime / 1000 << "." << elapsedTime % 1000 << "s" << std::endl;
 
 
     fwrite(color, 1, 3 * iYmax * iXmax, fp);
