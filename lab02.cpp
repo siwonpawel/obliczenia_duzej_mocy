@@ -1,9 +1,16 @@
-
+#include <iostream>
 #include <stdio.h>
 #include <math.h>
+#include <thread>
+#include <chrono>
 
-const int iXmax = 800;
-const int iYmax = 800;
+#define THREADS 400
+
+using namespace std;
+using namespace chrono;
+
+const int iXmax = 3400;
+const int iYmax = 3400;
 
 const double CxMin = -2.5;
 
@@ -21,27 +28,18 @@ const double ER2 = EscapeRadius * EscapeRadius;
 
 unsigned char color[iYmax][iXmax][3];
 
-
-int main() {
-    /* screen ( integer) coordinate */
-    int iX, iY;
-    /* world ( double) coordinate = parameter plane*/
+void calt(int tid) {
     double Cx, Cy;
-
-    FILE *fp;
-    const char *filename = "new1.ppm";
-    const char *comment = "# ";/* comment should start with # */
-    /* Z=Zx+Zy*i  ;   Z0 = 0 */
+    int Iteration;
+    int iX, iY;
     double Zx, Zy;
     double Zx2, Zy2; /* Zx2=Zx*Zx;  Zy2=Zy*Zy  */
-    /*  */
-    int Iteration;
 
-    fp = fopen(filename, "wb"); /* b -  binary mode */
-    /*write ASCII header to the file*/
-    fprintf(fp, "P6\n %s\n %d\n %d\n %d\n", comment, iXmax, iYmax, MaxColorComponentValue);
-    /* compute and write image data bytes to the file*/
-    for (iY = 0; iY < iYmax; iY++) {
+    int chunk = iYmax / THREADS;
+    int lb = tid * chunk;
+    int ub = lb + chunk;
+
+    for (iY = lb; iY < ub; iY++) {
         Cy = CyMin + iY * PixelHeight;
         if (fabs(Cy) < PixelHeight / 2) Cy = 0.0; /* Main antenna */
         for (iX = 0; iX < iXmax; iX++) {
@@ -57,7 +55,7 @@ int main() {
                 Zx = Zx2 - Zy2 + Cx;
                 Zx2 = Zx * Zx;
                 Zy2 = Zy * Zy;
-            };
+            }
             /* compute  pixel color (24 bit = 3 bytes) */
             if (Iteration == IterationMax) { /*  interior of Mandelbrot set = black */
                 color[iY][iX][0] = 0;
@@ -67,9 +65,36 @@ int main() {
                 color[iY][iX][0] = 255; /* Red*/
                 color[iY][iX][1] = 255; /* Green */
                 color[iY][iX][2] = 255; /* Blue */
-            };
+            }
         }
     }
+}
+
+int main() {
+    FILE *fp;
+    const char *filename = "new1.ppm";
+    const char *comment = "# ";/* comment should start with # */
+    /* Z=Zx+Zy*i  ;   Z0 = 0 */
+
+    fp = fopen(filename, "wb"); /* b -  binary mode */
+    /*write ASCII header to the file*/
+    fprintf(fp, "P6\n %s\n %d\n %d\n %d\n", comment, iXmax, iYmax, MaxColorComponentValue);
+    /* compute and write image data bytes to the file*/
+
+
+    steady_clock::time_point start = high_resolution_clock::now();
+    thread ekipa[THREADS];
+    for (int i = 0; i < THREADS; i++) {
+        ekipa[i] = thread(calt, i);
+    }
+
+    for (int i = 0; i < THREADS; i++) {
+        ekipa[i].join();
+    }
+    auto end = std::chrono::steady_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << elapsedTime << std::endl;
+
 
     fwrite(color, 1, 3 * iYmax * iXmax, fp);
     fclose(fp);
