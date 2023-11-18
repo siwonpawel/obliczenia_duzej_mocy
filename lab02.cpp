@@ -4,13 +4,14 @@
 #include <thread>
 #include <chrono>
 
-#define THREADS 1
+#define THREADS 2
+#define SIZE 3400
 
 using namespace std;
 using namespace chrono;
 
-const int iXmax = 3400;
-const int iYmax = 3400;
+const int iXmax = SIZE;
+const int iYmax = SIZE;
 
 const double CxMin = -2.5;
 
@@ -63,7 +64,7 @@ void calt(int tid) {
                 Zy2 = Zy * Zy;
             }
 
-//            sumi[tid] += Iteration;
+            sumi[tid] += Iteration;
 
             /* compute  pixel color (24 bit = 3 bytes) */
             if (Iteration == IterationMax) { /*  interior of Mandelbrot set = black */
@@ -81,7 +82,8 @@ void calt(int tid) {
 
 int main() {
     FILE *fp;
-    const char *filename = "new1.ppm";
+    char filename[100];
+    snprintf(filename, sizeof(filename), "new_%dt.ppm", THREADS);
     const char *comment = "# ";/* comment should start with # */
     /* Z=Zx+Zy*i  ;   Z0 = 0 */
 
@@ -101,9 +103,9 @@ int main() {
         ekipa[i].join();
     }
 
-//    for (int i = 0; i < THREADS; i++) {
-//        cout << sumi[i] << endl;
-//    }
+    for (int i = 0; i < THREADS; i++) {
+        cout << sumi[i] << endl;
+    }
 
     auto end = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
