@@ -1,39 +1,42 @@
 
 #include <stdio.h>
 #include <math.h>
-//
+
+const int iXmax = 800;
+const int iYmax = 800;
+
+const double CxMin = -2.5;
+
+const double CxMax = 1.5;
+const double CyMin = -2.0;
+const double CyMax = 2.0;
+
+double PixelWidth = (CxMax - CxMin) / iXmax;
+double PixelHeight = (CyMax - CyMin) / iYmax;
+
+const int MaxColorComponentValue = 255;
+const int IterationMax = 200;
+const double EscapeRadius = 2;
+const double ER2 = EscapeRadius * EscapeRadius
+
+unsigned char color[iYmax][iXmax][3];
+
 
 int main() {
     /* screen ( integer) coordinate */
     int iX, iY;
-    const int iXmax = 800;
-    const int iYmax = 800;
     /* world ( double) coordinate = parameter plane*/
     double Cx, Cy;
-    const double CxMin = -2.5;
-    const double CxMax = 1.5;
-    const double CyMin = -2.0;
-    const double CyMax = 2.0;
-    /* */
-    double PixelWidth = (CxMax - CxMin) / iXmax;
-    double PixelHeight = (CyMax - CyMin) / iYmax;
-    /* color component ( R or G or B) is coded from 0 to 255 */
-    /* it is 24 bit color RGB file */
-    const int MaxColorComponentValue = 255;
+
     FILE *fp;
     char *filename = "new1.ppm";
     char *comment = "# ";/* comment should start with # */
-    static unsigned char color[3];
     /* Z=Zx+Zy*i  ;   Z0 = 0 */
     double Zx, Zy;
     double Zx2, Zy2; /* Zx2=Zx*Zx;  Zy2=Zy*Zy  */
     /*  */
     int Iteration;
-    const int IterationMax = 200;
-    /* bail-out value , radius of circle ;  */
-    const double EscapeRadius = 2;
-    double ER2 = EscapeRadius * EscapeRadius;
-    /*create new file,give it a name and open it in binary mode  */
+
     fp = fopen(filename, "wb"); /* b -  binary mode */
     /*write ASCII header to the file*/
     fprintf(fp, "P6\n %s\n %d\n %d\n %d\n", comment, iXmax, iYmax, MaxColorComponentValue);
@@ -57,13 +60,13 @@ int main() {
             };
             /* compute  pixel color (24 bit = 3 bytes) */
             if (Iteration == IterationMax) { /*  interior of Mandelbrot set = black */
-                color[0] = 0;
-                color[1] = 0;
-                color[2] = 0;
+                color[iY][iX][0] = 0;
+                color[iY][iX][1] = 0;
+                color[iY][iX][2] = 0;
             } else { /* exterior of Mandelbrot set = white */
-                color[0] = 255; /* Red*/
-                color[1] = 255;  /* Green */
-                color[2] = 255;/* Blue */
+                color[iY][iX][0] = 255; /* Red*/
+                color[iY][iX][1] = 255; /* Green */
+                color[iY][iX][2] = 255; /* Blue */
             };
             /*write color to the file*/
             fwrite(color, 1, 3, fp);
